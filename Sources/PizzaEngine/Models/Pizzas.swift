@@ -9,13 +9,13 @@ import Foundation
 
 // MARK: - Pizzas
 public struct Pizzas: Decodable {
-    let basePrice: Int
-    let pizzas: [Pizza]
+    public let basePrice: Int
+    public let pizzas: [Pizza]
 }
 
 // MARK: - Pizza
 public struct Pizza: Decodable {
-    let ingredients: [Int]
-    let name: String
-    let imageURL: String?
+    public let ingredients: [Int]
+    public let name: String
+    public let imageURL: String?
 }

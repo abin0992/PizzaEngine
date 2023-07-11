@@ -20,7 +20,12 @@ private struct PEEndPoint: URLConfig {
         components.scheme = "https"
         components.host = AppConfiguration.apiBaseURL
         components.path = path
-        components.queryItems = queryItems
+        
+        if queryItems.isEmpty {
+            components.queryItems = nil
+        } else {
+            components.queryItems = queryItems
+        }
 
         guard let url = components.url else {
             DLog("Invalid URL components: \(components)")
@@ -44,9 +49,9 @@ struct PEUrlConfig: NetworkConfigurable {
     static let shared: PEUrlConfig = PEUrlConfig()
 
     private struct Paths {
-        static let ingredients = "/ingredients.json"
-        static let drinks = "/drinks.json"
-        static let pizzas = "/pizzas"
+        static let ingredients = "/mobile-native-challenge/ingredients.json"
+        static let drinks = "/mobile-native-challenge/drinks.json"
+        static let pizzas = "/mobile-native-challenge/pizzas.json"
     }
 
     func ingredients() -> URLConfig {
