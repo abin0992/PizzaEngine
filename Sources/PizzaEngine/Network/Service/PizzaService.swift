@@ -42,7 +42,7 @@ public class PizzaService: PizzaServiceProtocol {
         self.imageDownloader = ImageDownloader.sharedInstance
     }
 
-    func fetchPizzas(
+    public func fetchPizzas(
         completion: @escaping RetrievePizzasResult
     ) {
         networkManager.request(
@@ -57,7 +57,7 @@ public class PizzaService: PizzaServiceProtocol {
         }
     }
     
-    func fetchIngredients(
+    public func fetchIngredients(
         completion: @escaping RetrieveIngredientsResult
     ) {
         networkManager.request(
@@ -72,7 +72,7 @@ public class PizzaService: PizzaServiceProtocol {
         }
     }
     
-    func fetchDrinks(
+    public func fetchDrinks(
         completion: @escaping RetrieveDrinksResult
     ) {
         networkManager.request(
@@ -87,7 +87,7 @@ public class PizzaService: PizzaServiceProtocol {
         }
     }
     
-    func downloadImage(
+    public func downloadImage(
         from urlString: String,
         completion: @escaping FetchImageCompletion
     ) {
