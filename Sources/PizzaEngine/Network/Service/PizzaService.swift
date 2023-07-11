@@ -15,7 +15,7 @@ protocol PizzaServiceProtocol {
     func downloadImage(from urlString: String, completion: @escaping (UIImage?) -> Void)
 }
 
-class PizzaService: PizzaServiceProtocol {
+public class PizzaService: PizzaServiceProtocol {
 
     public typealias RetrievePizzasResult = ((Result<Pizzas, PEError>) -> Void)
     public typealias RetrieveIngredientsResult = ((Result<[Ingredient], PEError>) -> Void)
