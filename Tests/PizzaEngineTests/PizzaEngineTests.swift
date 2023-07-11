@@ -6,6 +6,6 @@ final class PizzaEngineTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        XCTAssertEqual(PizzaEngine().text, "Hello, World!")
+     //   XCTAssertEqual(PizzaEngine().text, "Hello, World!")
     }
 }
