@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Drink
-struct Drink: Decodable {
+public struct Drink: Decodable {
     let price: Double
     let name: String
     let id: Int
