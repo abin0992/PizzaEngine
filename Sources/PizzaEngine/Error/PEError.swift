@@ -15,7 +15,7 @@ public enum PEError: Error {
     case networkError
     case noData
     case urlGeneration
-    case PEError(statusCode: Int, data: Data?)
+    case PEError(statusCode: Int)
     case notConnected
     case generic
 
@@ -33,7 +33,7 @@ public enum PEError: Error {
                 return "No data received from server. Please try again"
             case .urlGeneration:
                 return "Couldn't generate URL"
-            case .PEError(statusCode: let statusCode, data: _):
+            case .PEError(statusCode: let statusCode):
                 return "\(statusCode) error received."
             case .notConnected:
                 return "Not connected to internet"

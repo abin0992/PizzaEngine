@@ -8,8 +8,8 @@
 import Foundation
 
 // MARK: - Pizzas
-public struct Pizzas: Decodable {
-    public let basePrice: Int
+public struct PizzasInfo: Decodable {
+    public let basePrice: Double
     public let pizzas: [Pizza]
 }
 
@@ -17,5 +17,5 @@ public struct Pizzas: Decodable {
 public struct Pizza: Decodable {
     public let ingredients: [Int]
     public let name: String
-    public let imageURL: String?
+    public let imageUrl: String?
 }
