@@ -1,3 +1,20 @@
-# PizzaEngine
 
-A description of this package.
+# Pizza Engine
+
+This is a library used for supporting iOS app
+
+## Installation
+
+Use the swift package manager to add this framework as dependecy.
+
+- Prefix `PE` stands for Pizza Engine
+- Unit tests added only for Pizza fetch, similar approach can be used for other API calls
+
+## To Do
+- Add unit tests for remaining services 
+- Add Reachability library to check if internet is available before making API call
+
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
