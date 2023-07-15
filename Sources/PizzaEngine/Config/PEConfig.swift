@@ -9,4 +9,5 @@ import Foundation
 
 struct AppConfiguration {
     static let apiBaseURL: String = "doclerlabs.github.io"
+    static let apiCheckOutURL: String = "httpbin.org"
 }

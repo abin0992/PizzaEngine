@@ -12,64 +12,47 @@ protocol PizzaServiceProtocol {
     func fetchPizzas() async throws -> PizzasInfo
     func fetchIngredients() async throws -> [Ingredient]
     func fetchDrinks() async throws -> [Drink]
-    func downloadImage(from urlString: String) async throws -> UIImage?
 }
 
 public class PizzaService: PizzaServiceProtocol {
 
-    public typealias FetchImageCompletion = ((UIImage?) -> Void)
-
     private let networkManager: NetworkService
     private let config: NetworkConfigurable
-    private let imageDownloader: ImageDownloader
 
     init(
         networkManager: NetworkService = NetworkManager.sharedInstance,
-        config: NetworkConfigurable = PEUrlConfig.shared,
-        imageDownloader: ImageDownloader = ImageDownloader.sharedInstance
+        config: NetworkConfigurable = PEUrlConfig.shared
     ) {
         self.networkManager = networkManager
         self.config = config
-        self.imageDownloader = imageDownloader
     }
 
     public init() {
         self.networkManager = NetworkManager.sharedInstance
         self.config = PEUrlConfig.shared
-        self.imageDownloader = ImageDownloader.sharedInstance
     }
 
     public func fetchPizzas() async throws -> PizzasInfo {
+        let urlRequest = URLRequest(url: config.pizzas().url)
         let pizzasInfo: PizzasInfo = try await networkManager.request(
-            endpoint: config.pizzas().url
+            urlRequest: urlRequest
         )
         return pizzasInfo
     }
     
     public func fetchIngredients() async throws -> [Ingredient] {
+        let urlRequest = URLRequest(url: config.ingredients().url)
         let ingredients: [Ingredient] = try await networkManager.request(
-            endpoint: config.ingredients().url
+            urlRequest: urlRequest
         )
         return ingredients
     }
     
     public func fetchDrinks() async throws -> [Drink] {
+        let urlRequest = URLRequest(url: config.drinks().url)
         let drinks: [Drink] = try await networkManager.request(
-            endpoint: config.drinks().url
+            urlRequest: urlRequest
         )
         return drinks
-    }
-    
-    public func downloadImage(from urlString: String) async throws -> UIImage? {
-        do {
-            let image: Any = try await imageDownloader.downloadImage(from: urlString)
-            if let uiImage = image as? UIImage {
-                return uiImage
-            } else {
-                return nil
-            }
-        } catch {
-            return nil
-        }
     }
 }

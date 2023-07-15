@@ -8,13 +8,13 @@
 import Foundation
 
 // MARK: - Pizzas
-public struct PizzasInfo: Decodable {
+public struct PizzasInfo: Codable {
     public let basePrice: Double
     public let pizzas: [Pizza]
 }
 
 // MARK: - Pizza
-public struct Pizza: Decodable {
+public struct Pizza: Codable {
     public let ingredients: [Int]
     public let name: String
     public let imageUrl: String?

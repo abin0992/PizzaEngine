@@ -27,7 +27,10 @@ internal class DefaultNetworkErrorLogger: NetworkErrorLogger {
     public func log(request: URLRequest) {
         DLog("-------------")
         DLog("request: \(request.url!)")
-        DLog("headers: \(request.allHTTPHeaderFields!)")
+        if let httpHeaders = request.allHTTPHeaderFields {
+            DLog("headers: \(httpHeaders)")
+        }
+        
         DLog("method: \(request.httpMethod!)")
         if let httpBody = request.httpBody, let result = ((try? JSONSerialization.jsonObject(with: httpBody, options: []) as? [String: AnyObject]) as [String: AnyObject]??) {
             DLog("body: \(String(describing: result))")

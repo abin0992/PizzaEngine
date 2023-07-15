@@ -12,7 +12,7 @@ protocol NetworkSessionManager {
 }
 
 protocol NetworkService {
-    func request<T: Decodable>(endpoint: URL) async throws -> T
+    func request<T: Decodable>(urlRequest: URLRequest) async throws -> T
 }
 
 class NetworkManager: NetworkSessionManager {
@@ -28,6 +28,7 @@ class NetworkManager: NetworkSessionManager {
 
     internal
     func fetchData(from request: URLRequest) async throws -> Data {
+        logger.log(request: request)
         let (responseData, response) = try await URLSession.shared.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse else {
             logger.log(error: .networkError)
@@ -60,8 +61,7 @@ extension NetworkManager: NetworkService {
         return decoder
     }
 
-    func request<T: Decodable>(endpoint: URL) async throws -> T {
-        let urlRequest = URLRequest(url: endpoint)
+    func request<T: Decodable>(urlRequest: URLRequest) async throws -> T {
         let responseData = try await fetchData(from: urlRequest)
         
         do {
