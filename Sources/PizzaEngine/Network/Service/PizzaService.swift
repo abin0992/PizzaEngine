@@ -1,6 +1,6 @@
 //
 //  PizzaService.swift
-//  
+//
 //
 //  Created by Abin Baby on 11.07.23.
 //
@@ -8,14 +8,17 @@
 import Foundation
 import UIKit
 
+// MARK: - PizzaServiceProtocol
+
 protocol PizzaServiceProtocol {
     func fetchPizzas() async throws -> PizzasInfo
     func fetchIngredients() async throws -> [Ingredient]
     func fetchDrinks() async throws -> [Drink]
 }
 
-public class PizzaService: PizzaServiceProtocol {
+// MARK: - PizzaService
 
+public class PizzaService: PizzaServiceProtocol {
     private let networkManager: NetworkService
     private let config: NetworkConfigurable
 
@@ -39,7 +42,7 @@ public class PizzaService: PizzaServiceProtocol {
         )
         return pizzasInfo
     }
-    
+
     public func fetchIngredients() async throws -> [Ingredient] {
         let urlRequest = URLRequest(url: config.ingredients().url)
         let ingredients: [Ingredient] = try await networkManager.request(
@@ -47,7 +50,7 @@ public class PizzaService: PizzaServiceProtocol {
         )
         return ingredients
     }
-    
+
     public func fetchDrinks() async throws -> [Drink] {
         let urlRequest = URLRequest(url: config.drinks().url)
         let drinks: [Drink] = try await networkManager.request(

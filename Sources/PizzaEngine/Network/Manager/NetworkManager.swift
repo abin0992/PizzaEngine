@@ -1,23 +1,28 @@
 //
 //  NetworkManager.swift
-//  
+//
 //
 //  Created by Abin Baby on 10.07.23.
 //
 
 import Foundation
 
+// MARK: - NetworkSessionManager
+
 protocol NetworkSessionManager {
     func fetchData(from request: URLRequest) async throws -> Data
 }
+
+// MARK: - NetworkService
 
 protocol NetworkService {
     func request<T: Decodable>(urlRequest: URLRequest) async throws -> T
 }
 
-class NetworkManager: NetworkSessionManager {
+// MARK: - NetworkManager
 
-    static let sharedInstance: NetworkManager = NetworkManager()
+class NetworkManager: NetworkSessionManager {
+    static let sharedInstance: NetworkManager = .init()
     private let logger: NetworkErrorLogger
 
     init(
@@ -34,7 +39,7 @@ class NetworkManager: NetworkSessionManager {
             logger.log(error: .networkError)
             throw PEError.networkError
         }
-        guard 200...299 ~= httpResponse.statusCode else {
+        guard 200 ... 299 ~= httpResponse.statusCode else {
             let error = PEError.PEError(statusCode: httpResponse.statusCode)
             logger.log(error: error)
             throw error
@@ -42,20 +47,13 @@ class NetworkManager: NetworkSessionManager {
         logger.log(responseData: responseData, response: httpResponse)
         return responseData
     }
-
-    private func resolve(error: Error) -> PEError {
-        let code = URLError.Code(rawValue: (error as NSError).code)
-        switch code {
-        case .notConnectedToInternet: return .notConnected
-        default: return .generic
-        }
-    }
 }
 
-extension NetworkManager: NetworkService {
+// MARK: NetworkService
 
+extension NetworkManager: NetworkService {
     var decoder: JSONDecoder {
-        let decoder: JSONDecoder = JSONDecoder()
+        let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         decoder.dateDecodingStrategy = .iso8601
         return decoder
@@ -63,7 +61,8 @@ extension NetworkManager: NetworkService {
 
     func request<T: Decodable>(urlRequest: URLRequest) async throws -> T {
         let responseData = try await fetchData(from: urlRequest)
-        
+
+        // TODO: Add reachability to check internet connection and return corresponding error
         do {
             let result: T = try decoder.decode(T.self, from: responseData)
             return result

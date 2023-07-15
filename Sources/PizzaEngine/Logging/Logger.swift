@@ -1,6 +1,6 @@
 //
 //  Logger.swift
-//  
+//
 //
 //  Created by Abin Baby on 10.07.23.
 //
@@ -13,16 +13,18 @@ public func DLog(_ message: String, filename: String = #file, function: String =
     #endif
 }
 
+// MARK: - NetworkErrorLogger
+
 protocol NetworkErrorLogger {
     func log(request: URLRequest)
     func log(responseData data: Data?, response: URLResponse?)
     func log(error: PEError)
 }
 
-// MARK: - Logger
+// MARK: - DefaultNetworkErrorLogger
 
 internal class DefaultNetworkErrorLogger: NetworkErrorLogger {
-    public init() { }
+    public init() {}
 
     public func log(request: URLRequest) {
         DLog("-------------")
@@ -30,7 +32,7 @@ internal class DefaultNetworkErrorLogger: NetworkErrorLogger {
         if let httpHeaders = request.allHTTPHeaderFields {
             DLog("headers: \(httpHeaders)")
         }
-        
+
         DLog("method: \(request.httpMethod!)")
         if let httpBody = request.httpBody, let result = ((try? JSONSerialization.jsonObject(with: httpBody, options: []) as? [String: AnyObject]) as [String: AnyObject]??) {
             DLog("body: \(String(describing: result))")
@@ -40,7 +42,9 @@ internal class DefaultNetworkErrorLogger: NetworkErrorLogger {
     }
 
     public func log(responseData data: Data?, response: URLResponse?) {
-        guard let data = data else { return }
+        guard let data = data else {
+            return
+        }
         if let dataDict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
             DLog("responseData: \(String(describing: dataDict))")
         }
@@ -50,4 +54,3 @@ internal class DefaultNetworkErrorLogger: NetworkErrorLogger {
         DLog("\(error.description)")
     }
 }
-

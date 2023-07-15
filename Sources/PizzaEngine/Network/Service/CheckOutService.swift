@@ -1,18 +1,21 @@
 //
 //  CheckOutService.swift
-//  
+//
 //
 //  Created by Abin Baby on 15.07.23.
 //
 
 import Foundation
 
+// MARK: - CheckOutServiceProtocol
+
 protocol CheckOutServiceProtocol {
     func checkOut(items: CheckOutItems) async throws -> CheckoutResponse
 }
 
-public class CheckOutService: CheckOutServiceProtocol {
+// MARK: - CheckOutService
 
+public class CheckOutService: CheckOutServiceProtocol {
     private let networkManager: NetworkService
     private let config: NetworkConfigurable
 
@@ -36,8 +39,7 @@ public class CheckOutService: CheckOutServiceProtocol {
         var request = URLRequest(url: config.checkOut().url)
         request.httpMethod = HTTPMethod.post.rawValue
         request.httpBody = requestData
-        
+
         return try await networkManager.request(urlRequest: request)
-    
     }
 }

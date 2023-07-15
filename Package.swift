@@ -28,6 +28,13 @@ let package = Package(
             dependencies: []),
         .testTarget(
             name: "PizzaEngineTests",
-            dependencies: ["PizzaEngine"]),
+            dependencies: ["PizzaEngine"],
+            resources: [
+                .copy("Stubs/test_drinks.json"),
+                .copy("Stubs/test_ingredients.json"),
+                .copy("Stubs/test_pizzas.json"),
+                .copy("Stubs/test_checkoutResponse.json")
+            ]
+        ),
     ]
 )
