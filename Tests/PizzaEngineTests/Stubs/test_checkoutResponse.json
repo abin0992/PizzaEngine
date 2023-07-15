@@ -1,0 +1,21 @@
+{
+  "args": {}, 
+  "data": "", 
+  "files": {}, 
+  "form": {
+    "{\"drinks\":[],\"pizzas\":[{\"name\":\"Margherita\",\"imageUrl\":\"https:\\/\\/doclerlabs.github.io\\/mobile-native-challenge\\/images\\/pizza_PNG44095.png\",\"ingredients\":[1,2]}]}": ""
+  }, 
+  "headers": {
+    "Accept": "*/*", 
+    "Accept-Encoding": "gzip, deflate, br", 
+    "Accept-Language": "en-US,en;q=0.9", 
+    "Content-Length": "163", 
+    "Content-Type": "application/x-www-form-urlencoded", 
+    "Host": "httpbin.org", 
+    "User-Agent": "NennosPizza/1 CFNetwork/1406.0.4 Darwin/22.5.0", 
+    "X-Amzn-Trace-Id": "Root=1-64b28c8a-2c92160c1c8470f257024a2a"
+  }, 
+  "json": null, 
+  "origin": "117.195.210.192", 
+  "url": "https://httpbin.org/post"
+}

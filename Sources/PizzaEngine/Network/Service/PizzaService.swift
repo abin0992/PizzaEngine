@@ -1,6 +1,6 @@
 //
 //  PizzaService.swift
-//  
+//
 //
 //  Created by Abin Baby on 11.07.23.
 //
@@ -8,98 +8,54 @@
 import Foundation
 import UIKit
 
+// MARK: - PizzaServiceProtocol
+
 protocol PizzaServiceProtocol {
-    func fetchPizzas(completion: @escaping (Result<Pizzas, PEError>) -> Void)
-    func fetchIngredients(completion: @escaping (Result<[Ingredient], PEError>) -> Void)
-    func fetchDrinks(completion: @escaping (Result<[Drink], PEError>) -> Void)
-    func downloadImage(from urlString: String, completion: @escaping (UIImage?) -> Void)
+    func fetchPizzas() async throws -> PizzasInfo
+    func fetchIngredients() async throws -> [Ingredient]
+    func fetchDrinks() async throws -> [Drink]
 }
 
+// MARK: - PizzaService
+
 public class PizzaService: PizzaServiceProtocol {
-
-    public typealias RetrievePizzasResult = ((Result<Pizzas, PEError>) -> Void)
-    public typealias RetrieveIngredientsResult = ((Result<[Ingredient], PEError>) -> Void)
-    public typealias RetrieveDrinksResult = ((Result<[Drink], PEError>) -> Void)
-    public typealias FetchImageCompletion = ((UIImage?) -> Void)
-
     private let networkManager: NetworkService
     private let config: NetworkConfigurable
-    private let imageDownloader: ImageDownloader
 
     init(
         networkManager: NetworkService = NetworkManager.sharedInstance,
-        config: NetworkConfigurable = PEUrlConfig.shared,
-        imageDownloader: ImageDownloader = ImageDownloader.sharedInstance
+        config: NetworkConfigurable = PEUrlConfig.shared
     ) {
         self.networkManager = networkManager
         self.config = config
-        self.imageDownloader = imageDownloader
     }
 
     public init() {
         self.networkManager = NetworkManager.sharedInstance
         self.config = PEUrlConfig.shared
-        self.imageDownloader = ImageDownloader.sharedInstance
     }
 
-    public func fetchPizzas(
-        completion: @escaping RetrievePizzasResult
-    ) {
-        networkManager.request(
-            endpoint: config.pizzas().url
-        ) { (result: Result<Pizzas, PEError>) in
-            switch result {
-            case .success(let pizzas):
-                completion(.success(pizzas))
-            case .failure(let exception):
-                completion(.failure(exception))
-            }
-        }
+    public func fetchPizzas() async throws -> PizzasInfo {
+        let urlRequest = URLRequest(url: config.pizzas().url)
+        let pizzasInfo: PizzasInfo = try await networkManager.request(
+            urlRequest: urlRequest
+        )
+        return pizzasInfo
     }
-    
-    public func fetchIngredients(
-        completion: @escaping RetrieveIngredientsResult
-    ) {
-        networkManager.request(
-            endpoint: config.ingredients().url
-        ) { (result: Result<[Ingredient], PEError>) in
-            switch result {
-            case .success(let dataArray):
-                completion(.success(dataArray))
-            case .failure(let exception):
-                completion(.failure(exception))
-            }
-        }
+
+    public func fetchIngredients() async throws -> [Ingredient] {
+        let urlRequest = URLRequest(url: config.ingredients().url)
+        let ingredients: [Ingredient] = try await networkManager.request(
+            urlRequest: urlRequest
+        )
+        return ingredients
     }
-    
-    public func fetchDrinks(
-        completion: @escaping RetrieveDrinksResult
-    ) {
-        networkManager.request(
-            endpoint: config.drinks().url
-        ) { (result: Result<[Drink], PEError>) in
-            switch result {
-            case .success(let dataArray):
-                completion(.success(dataArray))
-            case .failure(let exception):
-                completion(.failure(exception))
-            }
-        }
-    }
-    
-    public func downloadImage(
-        from urlString: String,
-        completion: @escaping FetchImageCompletion
-    ) {
-        imageDownloader.downloadImage(from: urlString) { result in
-            if
-                case .success(let image) = result,
-                let uiImage = image as? UIImage
-            {
-                completion(uiImage)
-            } else {
-                completion(nil)
-            }
-        }
+
+    public func fetchDrinks() async throws -> [Drink] {
+        let urlRequest = URLRequest(url: config.drinks().url)
+        let drinks: [Drink] = try await networkManager.request(
+            urlRequest: urlRequest
+        )
+        return drinks
     }
 }

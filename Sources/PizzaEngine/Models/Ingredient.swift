@@ -9,7 +9,13 @@ import Foundation
 
 // MARK: - Ingredient
 public struct Ingredient: Decodable {
-    let price: Double
-    let name: String
-    let id: Int
+    public let price: Double
+    public let name: String
+    public let id: Int
+}
+
+extension Ingredient: Comparable {
+    public static func < (lhs: Ingredient, rhs: Ingredient) -> Bool {
+        return lhs.name < rhs.name
+    }
 }

@@ -1,31 +1,28 @@
 //
 //  NetworkManager.swift
-//  
+//
 //
 //  Created by Abin Baby on 10.07.23.
 //
 
 import Foundation
 
-protocol NetworkSessionManager {
-    typealias CompletionHandler = (Result<Data, PEError>) -> Void
+// MARK: - NetworkSessionManager
 
-    func fetchData(
-        from request: URLRequest,
-        completion: @escaping CompletionHandler
-    )
+protocol NetworkSessionManager {
+    func fetchData(from request: URLRequest) async throws -> Data
 }
+
+// MARK: - NetworkService
 
 protocol NetworkService {
-    func request<T: Decodable>(
-        endpoint: URL,
-        completion: @escaping (Result<T, PEError>
-    ) -> Void)
+    func request<T: Decodable>(urlRequest: URLRequest) async throws -> T
 }
 
-class NetworkManager: NetworkSessionManager {
+// MARK: - NetworkManager
 
-    static let sharedInstance: NetworkManager = NetworkManager()
+class NetworkManager: NetworkSessionManager {
+    static let sharedInstance: NetworkManager = .init()
     private let logger: NetworkErrorLogger
 
     init(
@@ -35,79 +32,43 @@ class NetworkManager: NetworkSessionManager {
     }
 
     internal
-    func fetchData(
-        from request: URLRequest,
-        completion: @escaping (Result<Data, PEError>) -> Void
-    ) {
-        let sessionDataTask = URLSession.shared.dataTask(with: request) { data, response, requestError in
-            if let requestError = requestError {
-                var error: PEError
-                if let response = response as? HTTPURLResponse {
-                    error = .PEError(statusCode: response.statusCode, data: data)
-                } else {
-                    error = self.resolve(error: requestError)
-                }
-
-                self.logger.log(error: error)
-                completion(.failure(error))
-            } else {
-
-                guard let response = response as? HTTPURLResponse, 200...299 ~= response.statusCode else {
-                    self.logger.log(error: .networkError)
-                    completion(.failure(.networkError))
-                    return
-                }
-
-                guard let data = data else {
-                    self.logger.log(error: .noData)
-                    completion(.failure(.noData))
-                    return
-                }
-
-                self.logger.log(responseData: data, response: response)
-                completion(.success(data))
-            }
+    func fetchData(from request: URLRequest) async throws -> Data {
+        logger.log(request: request)
+        let (responseData, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            logger.log(error: .networkError)
+            throw PEError.networkError
         }
-        sessionDataTask.resume()
-    }
-
-    private func resolve(error: Error) -> PEError {
-        let code = URLError.Code(rawValue: (error as NSError).code)
-        switch code {
-        case .notConnectedToInternet: return .notConnected
-        default: return .generic
+        guard 200 ... 299 ~= httpResponse.statusCode else {
+            let error = PEError.PEError(statusCode: httpResponse.statusCode)
+            logger.log(error: error)
+            throw error
         }
+        logger.log(responseData: responseData, response: httpResponse)
+        return responseData
     }
 }
 
-extension NetworkManager: NetworkService {
+// MARK: NetworkService
 
+extension NetworkManager: NetworkService {
     var decoder: JSONDecoder {
-        let decoder: JSONDecoder = JSONDecoder()
+        let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         decoder.dateDecodingStrategy = .iso8601
         return decoder
     }
 
-    func request<T: Decodable>(
-        endpoint: URL,
-        completion: @escaping (Result<T, PEError>) -> Void
-    ) {
-        let urlRequest = URLRequest(url: endpoint)
-        fetchData(from: urlRequest) { responseData in
-            switch responseData {
-            case .success(let responseData):
-                do {
-                    let result: T = try self.decoder.decode(T.self, from: responseData)
-                    completion(.success(result))
-                } catch {
-                    self.logger.log(error: .invalidData)
-                    completion(.failure(.invalidData))
-                }
-            case .failure(let error):
-                self.logger.log(error: error)
-                completion(.failure(error))
-            }
+    func request<T: Decodable>(urlRequest: URLRequest) async throws -> T {
+        let responseData = try await fetchData(from: urlRequest)
+
+        // TODO: Add reachability to check internet connection and return corresponding error
+        do {
+            let result: T = try decoder.decode(T.self, from: responseData)
+            return result
+        } catch {
+            logger.log(error: .invalidData)
+            throw PEError.invalidData
         }
     }
 }
