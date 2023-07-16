@@ -12,6 +12,16 @@ public struct Ingredient: Decodable {
     public let price: Double
     public let name: String
     public let id: Int
+
+    public init(
+        price: Double,
+        name: String,
+        id: Int
+    ) {
+        self.price = price
+        self.name = name
+        self.id = id
+    }
 }
 
 extension Ingredient: Comparable {
