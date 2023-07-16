@@ -27,7 +27,7 @@ public struct Pizza: Codable {
     public let name: String
     public let imageUrl: String?
     
-    init(
+    public init(
         ingredients: [Int],
         name: String,
         imageUrl: String?
