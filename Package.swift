@@ -36,5 +36,6 @@ let package = Package(
                 .copy("Stubs/test_checkoutResponse.json")
             ]
         ),
-    ]
+    ],
+    swiftLanguageVersions: [.version("5.7"))]
 )
