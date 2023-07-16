@@ -37,5 +37,5 @@ let package = Package(
             ]
         ),
     ],
-    swiftLanguageVersions: [.version("5.7"))]
+    swiftLanguageVersions: [.v5]
 )
